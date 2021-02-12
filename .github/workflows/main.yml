@@ -26,4 +26,4 @@ jobs:
     - uses: ./
       with:
         mattermost_webhook: ${{ secrets.MATTERMOST_WEBHOOK }}
-        git_token: ${{ GITHUB_TOKEN }}
+        git_token: ${{ secrets.GITHUB_TOKEN }}
