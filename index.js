@@ -21,7 +21,7 @@ const prName = `[${github.context.payload.pull_request.title}](${github.context.
 
 let commits = [];
 console.log(`url: ${github.context.payload.pull_request.commits_url}`)
-axios.get(github.context.payload.pull_request.commits_url, {headers: {Authorization: `token ${gitToken}`}})
+axios.get(github.context.payload.pull_request.commits_url, {headers: {Authorization: `Bearer ${gitToken}`}})
     .then((res) => {
         const data = JSON.parse(res.data)
         commits.push(`:commit: ${data.committer.login}: [${data.commit.message}](${data.commit.html_url})`);
