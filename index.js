@@ -13,8 +13,9 @@ async function getCommits() {
         });
 
         let commits = [];
+        let url = `https://github.com/repos/${github.context.repo.owner}/${github.context.repo.repo}/pull/${github.context.payload.pull_request.number}/commits/`
         response.data.forEach(cmt => {
-            commits.push(`:commit: ${cmt.committer.login}: [${cmt.commit.message}](${github.context.payload.pull_request.commits_url}/${cmt.commit.tree.sha})`);
+            commits.push(`:commit: ${cmt.committer.login}: [${cmt.commit.message}](${url}/${cmt.commit.tree.sha})`);
         });
 
         return commits;
@@ -41,7 +42,7 @@ async function generateMessage() {
                     {"short": true, "title": ":phpunit: Tests", "value": "${test_unit}"},
                     {"short": true, "title": ":coverage: Tests Coverage", "value": "${test_coverage}"},
                     {"short": true, "title": ":phpcs: Code Style", "value": "${code_style_errors}"},
-                    {"short": true, "title": ":git: Branch name", "value": "" + github.context + ""},
+                    {"short": true, "title": ":git: Branch name", "value": "" + github.context.ref + ""},
                     {"short": false, "title": ":commits: Commits", "value": (await getCommits()).join("\n")}
                 ]
             }]
