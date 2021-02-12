@@ -21,6 +21,7 @@ const prName = `[${github.context.payload.pull_request.title}](${github.context.
 
 let commits = [];
 console.log(`url: ${github.context.payload.pull_request.commits_url}`)
+
 const options = {
     headers: {
         'authorization': `Bearer ${gitToken}`,
@@ -35,62 +36,62 @@ axios.get(github.context.payload.pull_request.commits_url, options)
             commits.push(`:commit: ${cmt.committer.login}: [${cmt.commit.message}](${cmt.commit.html_url})`);
         });
     })
-    .catch((res) => {
-        console.log(res.data)
+    .catch((error) => {
+        console.log(error)
     });
-
-let message = {
-    "text": `### ${github.context.workflow} ${prName} ${status} ###`,
-    "username": "Uncle Github",
-    "attachments": [
-        {
-            "color": "" + color + "",
-            "fields": [
-                {
-                    "short": true,
-                    "title": ":github: Repository:",
-                    "value": repoName
-                },
-                {
-                    "short": true,
-                    "title": ":docker: Image name:",
-                    "value": "${image_name}"
-                },
-                {
-                    "short": true,
-                    "title": ":phpunit: Tests",
-                    "value": "${test_unit}"
-                },
-                {
-                    "short": true,
-                    "title": ":coverage: Tests Coverage",
-                    "value": "${test_coverage}"
-                },
-                {
-                    "short": true,
-                    "title": ":phpcs: Code Style",
-                    "value": "${code_style_errors}"
-                },
-                {
-                    "short": true,
-                    "title": ":git: Branch name",
-                    "value": "" + github.context + ""
-                },
-                {
-                    "short": false,
-                    "title": ":commits: Commits",
-                    "value": commits.join('\n')
-                }
-            ]
-        }
-    ]
-};
-
-const webhook = core.getInput('mattermost_webhook');
-axios.post(webhook, message)
-    .then(function (response) {
-        console.log(response);
-    })
-    .catch(function (error) {
-        console.log(error);
-    });
+//
+// let message = {
+//     "text": `### ${github.context.workflow} ${prName} ${status} ###`,
+//     "username": "Uncle Github",
+//     "attachments": [
+//         {
+//             "color": "" + color + "",
+//             "fields": [
+//                 {
+//                     "short": true,
+//                     "title": ":github: Repository:",
+//                     "value": repoName
+//                 },
+//                 {
+//                     "short": true,
+//                     "title": ":docker: Image name:",
+//                     "value": "${image_name}"
+//                 },
+//                 {
+//                     "short": true,
+//                     "title": ":phpunit: Tests",
+//                     "value": "${test_unit}"
+//                 },
+//                 {
+//                     "short": true,
+//                     "title": ":coverage: Tests Coverage",
+//                     "value": "${test_coverage}"
+//                 },
+//                 {
+//                     "short": true,
+//                     "title": ":phpcs: Code Style",
+//                     "value": "${code_style_errors}"
+//                 },
+//                 {
+//                     "short": true,
+//                     "title": ":git: Branch name",
+//                     "value": "" + github.context + ""
+//                 },
+//                 {
+//                     "short": false,
+//                     "title": ":commits: Commits",
+//                     "value": commits.join('\n')
+//                 }
+//             ]
+//         }
+//     ]
+// };
+//
+// const webhook = core.getInput('mattermost_webhook');
+// axios.post(webhook, message)
+//     .then(function (response) {
+//         console.log(response);
+//     })
+//     .catch(function (error) {
+//         console.log(error);
+//     });

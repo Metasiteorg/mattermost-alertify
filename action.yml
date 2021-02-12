@@ -8,5 +8,5 @@ inputs:
     description: 'mattermost webhook url'
     required: true
   git_token:
-    description: 'mattermost webhook url'
+    description: 'github token'
     required: true
