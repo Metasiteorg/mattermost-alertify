@@ -7,3 +7,6 @@ inputs:
   mattermost_webhook:
     description: 'mattermost webhook url'
     required: true
+  git_token:
+    description: 'mattermost webhook url'
+    required: true
