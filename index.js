@@ -2,12 +2,14 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const axios = require('axios');
 
-console.log(github.context.payload.pull_request);
+console.log(github.context.payload.pull_request.commits_url);
 
 const status = "success"
 
 const color = status === "success" ? "#00FF00" : "#FF0000"
 const icon = status === "success" ? ":white_check_mark:" : ":x:"
+
+// const commits = axios.get()
 
 // if [ "$JOB_STATUS" = "success" ]; then ICON=':white_check_mark:'; else ICON=':x:'; fi
 // if [ "$JOB_STATUS" = "success" ]; then COLOR='#00FF00'; else COLOR='#FF0000'; fi
@@ -16,14 +18,24 @@ const icon = status === "success" ? ":white_check_mark:" : ":x:"
 const repoName = `[${github.context.payload.repository.name}](${github.context.payload.repository.html_url})`
 const prName = `[${github.context.payload.pull_request.title}](${github.context.payload.pull_request.html_url})`
 
+let commits = [];
+axios.get(github.context.payload.pull_request.commits_url).then((res) => {
+    const data = JSON.parse(res.data)
+    commits.push(`:commit: ${data.committer.login}: [${data.commit.message}](${data.commit.html_url})`);
+});
+
 let message = {
-    "text": `### ${icon} ${repoName} ${prName} ${status} ###`,
+    "text": `### ${github.context.workflow} ${prName} ${status} ###`,
     "username": "Uncle Github",
     "attachments": [
         {
             "color": "" + color + "",
-            "title_link": "{{pr_url}}",
             "fields": [
+                {
+                    "short": true,
+                    "title": ":github: Repository:",
+                    "value": repoName
+                },
                 {
                     "short": true,
                     "title": ":docker: Image name:",
@@ -52,7 +64,7 @@ let message = {
                 {
                     "short": false,
                     "title": ":commits: Commits",
-                    "value": "{{commit}}"
+                    "value": commits.join('\n')
                 }
             ]
         }
