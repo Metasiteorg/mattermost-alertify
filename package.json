@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "notify": "node index.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Metasiteorg/mattermost-alertify.git"
@@ -18,6 +15,7 @@
   "homepage": "https://github.com/Metasiteorg/mattermost-alertify#readme",
   "dependencies": {
     "@actions/core": "^1.2.6",
-    "@actions/github": "^4.0.0"
+    "@actions/github": "^4.0.0",
+    "axios": "^0.21.1"
   }
 }

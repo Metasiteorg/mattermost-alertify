@@ -1,17 +1,26 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const axios = require('axios');
 
-const webhook = core.getInput('mattermost_webhook');
+console.log(github.context.payload.repository);
 
-console.log('test check is it working. :)))')
+const status = "success"
+
+const color = status === "success" ? "#00FF00" : "#FF0000"
+const icon = status === "success" ? ":white_check_mark:" : ":x:"
+
+// if [ "$JOB_STATUS" = "success" ]; then ICON=':white_check_mark:'; else ICON=':x:'; fi
+// if [ "$JOB_STATUS" = "success" ]; then COLOR='#00FF00'; else COLOR='#FF0000'; fi
+// if [ "$JOB_STATUS" = "success" ]; then STATUS='Success'; else STATUS='Failed'; fi
+
+const repoName = "[" + github.context.payload.repository.name + "](" + github.context.payload.repository.html_url + ")"
 
 let message = {
-    "text": "### {{workflow_status_icon}} MAN-CMS {{workflow_name}} {{workflow_status}} ###",
+    "text": "### " + icon + repoName + github.context.payload.pull_request + status + " ###",
     "username": "Uncle Github",
     "attachments": [
         {
-            "color": "{{color}}",
-            "title": "{{pr_name}}",
+            "color": "" + color + "",
             "title_link": "{{pr_url}}",
             "fields": [
                 {
@@ -37,7 +46,7 @@ let message = {
                 {
                     "short": true,
                     "title": ":git: Branch name",
-                    "value": "{{branch_name}}"
+                    "value": "" + github.context + ""
                 },
                 {
                     "short": false,
@@ -48,3 +57,12 @@ let message = {
         }
     ]
 };
+
+const webhook = core.getInput('mattermost_webhook');
+axios.post(webhook, message)
+    .then(function (response) {
+        console.log(response);
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
