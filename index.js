@@ -59,11 +59,11 @@ let message = {
     ]
 };
 
-// const webhook = core.getInput('mattermost_webhook');
-// axios.post(webhook, message)
-//     .then(function (response) {
-//         console.log(response);
-//     })
-//     .catch(function (error) {
-//         console.log(error);
-//     });
+const webhook = core.getInput('mattermost_webhook');
+axios.post(webhook, message)
+    .then(function (response) {
+        console.log(response);
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
