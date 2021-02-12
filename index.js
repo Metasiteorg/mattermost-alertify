@@ -34,6 +34,7 @@ axios.get(github.context.payload.pull_request.commits_url, options)
         // console.log(res);
         // const data = JSON.parse(res.data)
         res.data.forEach(cmt => {
+            console.log(cmt);
             commits.push(`:commit: ${cmt.committer.login}: [${cmt.commit.message}](${cmt.commit.html_url})`);
         });
     })
