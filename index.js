@@ -36,7 +36,7 @@ axios.get(github.context.payload.pull_request.commits_url, options)
         });
     })
     .catch((res) => {
-        console.log(res)
+        console.log(res.data)
     });
 
 let message = {
