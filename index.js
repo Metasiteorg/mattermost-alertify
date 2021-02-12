@@ -37,6 +37,7 @@ async function generateMessage() {
     const status = "success"
     const color = status === "success" ? "#00FF00" : "#FF0000"
     const branch = process.env.GITHUB_REF.split('/').slice(2).join('/')
+    console.log(process.env)
 
     return {
         "text": `### ${github.context.workflow} ${prName} ${status} ###`,
