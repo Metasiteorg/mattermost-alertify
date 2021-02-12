@@ -36,6 +36,7 @@ async function generateMessage() {
     const prName = `[${github.context.payload.pull_request.title}](${github.context.payload.pull_request.html_url})`
     const status = "success"
     const color = status === "success" ? "#00FF00" : "#FF0000"
+    const branch = process.env.GITHUB_REF.split('/').slice(2).join('/')
 
     return {
         "text": `### ${github.context.workflow} ${prName} ${status} ###`,
@@ -46,7 +47,7 @@ async function generateMessage() {
                 "fields": [
                     {"short": true, "title": ":github: Repository:", "value": repoName},
                     {"short": true, "title": ":docker: Image name:", "value": "${image_name}"},
-                    {"short": true, "title": ":git: Branch name", "value": "" + github.context.ref + ""},
+                    {"short": true, "title": ":git: Branch name", "value": "" + branch + ""},
                     {"short": true, "title": ":phpunit: Tests", "value": "${test_unit}"},
                     {"short": true, "title": ":coverage: Tests Coverage", "value": "${test_coverage}"},
                     {"short": true, "title": ":phpcs: Code Style", "value": "${code_style_errors}"},
