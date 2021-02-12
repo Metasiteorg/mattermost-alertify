@@ -31,10 +31,12 @@ const options = {
 
 axios.get(github.context.payload.pull_request.commits_url, options)
     .then((res) => {
-        const data = JSON.parse(res.data)
-        data.forEach(cmt => {
-            commits.push(`:commit: ${cmt.committer.login}: [${cmt.commit.message}](${cmt.commit.html_url})`);
-        });
+        // console.log(res);
+        console.log(res.data);
+        // const data = JSON.parse(res.data)
+        // data.forEach(cmt => {
+        //     commits.push(`:commit: ${cmt.committer.login}: [${cmt.commit.message}](${cmt.commit.html_url})`);
+        // });
     })
     .catch((error) => {
         console.log(error)
