@@ -1,0 +1,5 @@
+name: 'Metasite Mattermost Alertify'
+description: 'Report CI status to mattermost'
+runs:
+  using: 'node12'
+  main: 'index.js'
