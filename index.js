@@ -21,10 +21,19 @@ const prName = `[${github.context.payload.pull_request.title}](${github.context.
 
 let commits = [];
 console.log(`url: ${github.context.payload.pull_request.commits_url}`)
-axios.get(github.context.payload.pull_request.commits_url, {headers: {Authorization: `Bearer ${gitToken}`}})
+const options = {
+    headers: {
+        'authorization': `Bearer ${gitToken}`,
+        'content-type': 'application/json'
+    }
+};
+
+axios.get(github.context.payload.pull_request.commits_url, options)
     .then((res) => {
         const data = JSON.parse(res.data)
-        commits.push(`:commit: ${data.committer.login}: [${data.commit.message}](${data.commit.html_url})`);
+        data.forEach(cmt => {
+            commits.push(`:commit: ${cmt.committer.login}: [${cmt.commit.message}](${cmt.commit.html_url})`);
+        });
     })
     .catch((res) => {
         console.log(res)
