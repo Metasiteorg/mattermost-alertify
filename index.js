@@ -2,7 +2,8 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const axios = require('axios');
 
-console.log(github.context.payload.pull_request.commits_url);
+const gitToken = core.getInput('git_token');
+// console.log(github.context.payload.pull_request.commits_url);
 
 const status = "success"
 
@@ -19,7 +20,7 @@ const repoName = `[${github.context.payload.repository.name}](${github.context.p
 const prName = `[${github.context.payload.pull_request.title}](${github.context.payload.pull_request.html_url})`
 
 let commits = [];
-axios.get(github.context.payload.pull_request.commits_url).then((res) => {
+axios.get(github.context.payload.pull_request.commits_url, {headers: {Authorization: `token ${gitToken}`}}).then((res) => {
     const data = JSON.parse(res.data)
     commits.push(`:commit: ${data.committer.login}: [${data.commit.message}](${data.commit.html_url})`);
 });
