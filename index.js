@@ -13,7 +13,7 @@ async function getCommits() {
         });
 
         let commits = [];
-        let url = `https://github.com/repos/${github.context.repo.owner}/${github.context.repo.repo}/pull/${github.context.payload.pull_request.number}/commits/`
+        let url = `${github.context.payload.repository.html_url}/commits/`
         response.data.forEach(cmt => {
             commits.push(`:commit: ${cmt.committer.login}: [${cmt.commit.message}](${url}/${cmt.commit.tree.sha})`);
         });
