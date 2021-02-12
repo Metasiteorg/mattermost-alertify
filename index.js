@@ -24,7 +24,6 @@ async function getCommits() {
             commits.push(`:commit: ${item.committer.login}: [${item.commit.message}](${url})`);
         }
 
-        console.log(commits);
         return commits;
     } catch (err) {
         console.error(err)
