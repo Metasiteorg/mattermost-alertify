@@ -2,22 +2,29 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const axios = require('axios');
 
+const config = {
+    headers: {
+        'authorization': `Bearer ${core.getInput('git_token')}`,
+        'content-type': 'application/json'
+    }
+};
+
+async function getHTMLUrl(apiUrl) {
+    const response = await axios.get(apiUrl, config);
+    return response.data.html_url
+}
+
 async function getCommits() {
     try {
-        const gitToken = core.getInput('git_token');
-        const response = await axios.get(github.context.payload.pull_request.commits_url, {
-            headers: {
-                'authorization': `Bearer ${gitToken}`,
-                'content-type': 'application/json'
-            }
-        });
+        const response = await axios.get(github.context.payload.pull_request.commits_url, config);
 
         let commits = [];
-        let url = `${github.context.payload.pull_request.html_url}/commits`
-        response.data.forEach(cmt => {
-            commits.push(`:commit: ${cmt.committer.login}: [${cmt.commit.message}](${url}/${cmt.commit.tree.sha})`);
-        });
+        for (const item of response.data) {
+            let url = await getHTMLUrl(item.url);
+            commits.push(`:commit: ${item.committer.login}: [${item.commit.message}](${url})`);
+        }
 
+        console.log(commits);
         return commits;
     } catch (err) {
         console.error(err)
@@ -53,7 +60,6 @@ generateMessage().then((msg) => {
     const webhook = core.getInput('mattermost_webhook');
     axios.post(webhook, msg)
         .then(function (response) {
-            console.log(response);
         })
         .catch(function (error) {
             console.log(error);
