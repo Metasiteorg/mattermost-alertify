@@ -3,7 +3,7 @@ const github = require('@actions/github');
 
 const webhook = core.getInput('mattermost_webhook');
 
-console.log('test check is it working. :))')
+console.log('test check is it working. :)))')
 
 let message = {
     "text": "### {{workflow_status_icon}} MAN-CMS {{workflow_name}} {{workflow_status}} ###",
