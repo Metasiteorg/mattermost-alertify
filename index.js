@@ -20,10 +20,15 @@ const repoName = `[${github.context.payload.repository.name}](${github.context.p
 const prName = `[${github.context.payload.pull_request.title}](${github.context.payload.pull_request.html_url})`
 
 let commits = [];
-axios.get(github.context.payload.pull_request.commits_url, {headers: {Authorization: `token ${gitToken}`}}).then((res) => {
-    const data = JSON.parse(res.data)
-    commits.push(`:commit: ${data.committer.login}: [${data.commit.message}](${data.commit.html_url})`);
-});
+console.log(`url: ${github.context.payload.pull_request.commits_url}`)
+axios.get(github.context.payload.pull_request.commits_url, {headers: {Authorization: `token ${gitToken}`}})
+    .then((res) => {
+        const data = JSON.parse(res.data)
+        commits.push(`:commit: ${data.committer.login}: [${data.commit.message}](${data.commit.html_url})`);
+    })
+    .catch((res) => {
+        console.log(res)
+    });
 
 let message = {
     "text": `### ${github.context.workflow} ${prName} ${status} ###`,
