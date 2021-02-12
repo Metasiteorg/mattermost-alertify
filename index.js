@@ -39,10 +39,10 @@ async function generateMessage() {
                 "fields": [
                     {"short": true, "title": ":github: Repository:", "value": repoName},
                     {"short": true, "title": ":docker: Image name:", "value": "${image_name}"},
+                    {"short": true, "title": ":git: Branch name", "value": "" + github.context.ref + ""},
                     {"short": true, "title": ":phpunit: Tests", "value": "${test_unit}"},
                     {"short": true, "title": ":coverage: Tests Coverage", "value": "${test_coverage}"},
                     {"short": true, "title": ":phpcs: Code Style", "value": "${code_style_errors}"},
-                    {"short": true, "title": ":git: Branch name", "value": "" + github.context.ref + ""},
                     {"short": false, "title": ":commits: Commits", "value": (await getCommits()).join("\n")}
                 ]
             }]
