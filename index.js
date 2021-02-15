@@ -1,6 +1,9 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const artifact = require('@actions/artifact');
 const axios = require('axios');
+const fs = require('fs')
+const artifactClient = artifact.create()
 
 const config = {
     headers: {
@@ -37,6 +40,9 @@ async function generateMessage() {
     const color = status === "success" ? "#00FF00" : "#FF0000"
     const branch = `from **${process.env.GITHUB_HEAD_REF}** to **${process.env.GITHUB_BASE_REF}**`
 
+    const downloadResponse = await artifactClient.downloadArtifact('code-coverage-report', 'coverage.txt')
+    const coverage = fs.readFileSync(downloadResponse.downloadPath, 'utf8');
+
     return {
         "text": `### ${github.context.workflow} ${prName} ${status} ###`,
         "username": "Uncle Github",
@@ -48,8 +54,8 @@ async function generateMessage() {
                     {"short": true, "title": ":docker: Image name:", "value": "${image_name}"},
                     {"short": true, "title": ":git: Branch name", "value": "" + branch + ""},
                     {"short": true, "title": ":phpunit: Tests", "value": "${test_unit}"},
-                    {"short": true, "title": ":coverage: Tests Coverage", "value": "${test_coverage}"},
-                    {"short": true, "title": ":phpcs: Code Style", "value": "${code_style_errors}"},
+                    {"short": true, "title": ":coverage: Tests Coverage", "value": "```\n" + coverage + "\n```"},
+                    {"short": true, "title": ":phpcs: Code Style", "value": `Coding style errors`},
                     {"short": false, "title": ":commits: Commits", "value": (await getCommits()).join("\n")}
                 ]
             }]
