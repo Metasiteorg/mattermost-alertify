@@ -71,7 +71,7 @@ async function generateMessage () {
           { 'short': true, 'title': ':github: Repository:', 'value': repoName },
           { 'short': true, 'title': ':docker: Image name:', 'value': '${image_name}' },
           { 'short': true, 'title': ':git: Branch name', 'value': '' + branch + '' },
-          { 'short': true, 'title': ':phpunit: Tests', 'value': (await tests()) },
+          // { 'short': true, 'title': ':phpunit: Tests', 'value': (await tests()) },
           {
             'short': true,
             'title': ':coverage: Tests Coverage',
