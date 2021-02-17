@@ -4,6 +4,7 @@ const artifact = require('@actions/artifact');
 const axios = require('axios');
 const fs = require('fs')
 const artifactClient = artifact.create()
+const xml2js = require('xml2js')
 
 const config = {
     headers: {
@@ -33,15 +34,32 @@ async function getCommits() {
     }
 }
 
+async function coverage() {
+    const downloadResponse = await artifactClient.downloadArtifact('code-coverage-report', 'coverage.txt')
+    return fs.readFileSync(downloadResponse.downloadPath, 'utf8');
+}
+
+async function tests() {
+    const downloadResponse = await artifactClient.downloadArtifact('tests-junit', 'junit.xml')
+    const junit = fs.readFileSync(downloadResponse.downloadPath, 'utf8')
+    return xml2js.parseStringPromise(junit).then(function (result) {
+        const meta = result.testsuites.testsuite[0].$
+        return `Tests: ${meta.tests} Assertions: ${meta.assertions} Errors: ${meta.errors} Warnings: ${meta.warnings} Failures: ${meta.failures} Skipped: ${meta.skipped} Time: ${meta.time}`;
+    });
+
+}
+
+async function codeQuality() {
+    const downloadResponse = await artifactClient.downloadArtifact('code-quality', 'codequality.txt')
+    return fs.readFileSync(downloadResponse.downloadPath, 'utf8');
+}
+
 async function generateMessage() {
     const repoName = `[${github.context.payload.repository.name}](${github.context.payload.repository.html_url})`
     const prName = `[${github.context.payload.pull_request.title}](${github.context.payload.pull_request.html_url})`
     const status = "success"
     const color = status === "success" ? "#00FF00" : "#FF0000"
     const branch = `from **${process.env.GITHUB_HEAD_REF}** to **${process.env.GITHUB_BASE_REF}**`
-
-    const downloadResponse = await artifactClient.downloadArtifact('code-coverage-report', 'coverage.txt')
-    const coverage = fs.readFileSync(downloadResponse.downloadPath, 'utf8');
 
     return {
         "text": `### ${github.context.workflow} ${prName} ${status} ###`,
@@ -53,9 +71,13 @@ async function generateMessage() {
                     {"short": true, "title": ":github: Repository:", "value": repoName},
                     {"short": true, "title": ":docker: Image name:", "value": "${image_name}"},
                     {"short": true, "title": ":git: Branch name", "value": "" + branch + ""},
-                    {"short": true, "title": ":phpunit: Tests", "value": "${test_unit}"},
-                    {"short": true, "title": ":coverage: Tests Coverage", "value": "```\n" + coverage + "\n```"},
-                    {"short": true, "title": ":phpcs: Code Style", "value": `Coding style errors`},
+                    {"short": true, "title": ":phpunit: Tests", "value": (await tests())},
+                    {
+                        "short": true,
+                        "title": ":coverage: Tests Coverage",
+                        "value": "```\n" + (await coverage()) + "\n```"
+                    },
+                    {"short": true, "title": ":phpcs: Code Quality", "value": (await codeQuality())},
                     {"short": false, "title": ":commits: Commits", "value": (await getCommits()).join("\n")}
                 ]
             }]
