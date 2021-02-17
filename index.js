@@ -40,10 +40,10 @@ async function coverage () {
 }
 
 async function tests () {
-  const downloadResponse = await artifactClient.downloadArtifact('tests-junit', '/artifacts')
+  const downloadResponse = await artifactClient.downloadArtifact('tests-junit', 'artifacts/storage')
   console.log(`Download path: ${downloadResponse.downloadPath + '/' + downloadResponse.artifactName}\n`)
 
-  fs.readdirSync('/artifacts').forEach(file => {
+  fs.readdirSync(downloadResponse.downloadPath).forEach(file => {
     console.log(file)
   })
 
