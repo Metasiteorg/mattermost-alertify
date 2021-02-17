@@ -52,7 +52,9 @@ async function tests () {
 
 async function codeQuality () {
   const downloadResponse = await artifactClient.downloadArtifact('code-quality', 'artifacts/storage')
-  return fs.readFileSync(`${downloadResponse.downloadPath}/codequality.txt`, 'utf8')
+  const data = fs.readFileSync(`${downloadResponse.downloadPath}/codequality.txt`, 'utf8')
+
+  return data.length > 1 ? ':x:' : ':white_check_mark:'
 }
 
 async function generateMessage () {
