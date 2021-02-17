@@ -1,6 +1,6 @@
-import {App} from './src/app';
-import {GithubApi} from './src/githubApi';
-import {ArtifactApi} from './src/artifactApi';
+import {App} from './src/app.js';
+import {GithubApi} from './src/githubApi.js';
+import {ArtifactApi} from './src/artifactApi.js';
 
 const core = require('@actions/core');
 const github = require('@actions/github');

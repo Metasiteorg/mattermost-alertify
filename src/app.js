@@ -1,5 +1,5 @@
-import {PushTemplate} from './templates/push';
-import {PullRequestTemplate} from './templates/pullRequest';
+import {PushTemplate} from './templates/push.js';
+import {PullRequestTemplate} from './templates/pullRequest.js';
 
 export class App {
   templates;

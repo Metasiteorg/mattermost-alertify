@@ -1,4 +1,4 @@
-import {BaseTemplate} from './baseTemplate';
+import {BaseTemplate} from './baseTemplate.js';
 
 export class PushTemplate extends BaseTemplate {
   constructor(github, artifactApi, githubApi) {

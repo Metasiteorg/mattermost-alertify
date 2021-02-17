@@ -1,4 +1,4 @@
-import {BaseTemplate} from './baseTemplate';
+import {BaseTemplate} from './baseTemplate.js';
 
 export class PullRequestTemplate extends BaseTemplate {
   constructor(github, artifactApi, githubApi) {
