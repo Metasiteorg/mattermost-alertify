@@ -45,7 +45,15 @@ async function tests () {
 
   return xml2js.parseStringPromise(junit).then(function (result) {
     const meta = result.testsuites.testsuite[0].$
-    return `Tests: ${meta.tests} \n Assertions: ${meta.assertions} \n Errors: ${meta.errors} \n Warnings: ${meta.warnings} \n Failures: ${meta.failures} \n Skipped: ${meta.skipped} Time: ${meta.time}`
+    return `
+      **Tests**: ${meta.tests}\n
+      **Assertions**: ${meta.assertions}\n
+      **Errors**: ${meta.errors}\n
+      **Warnings**: ${meta.warnings} \n 
+      **Failures**: ${meta.failures} \n 
+      **Skipped**: ${meta.skipped}\b
+      **Time**: ${meta.time}
+      `
   })
 
 }
@@ -76,7 +84,7 @@ async function generateMessage () {
           { 'short': true, 'title': ':git: Branch name', 'value': '' + branch + '' },
           { 'short': true, 'title': ':phpunit: Tests', 'value': (await tests()) },
           { 'short': true, 'title': ':coverage: Tests Coverage', 'value': (await coverage()) },
-          { 'short': true, 'title': ':phpcs: Code Quality', 'value': (await codeQuality()) },
+          { 'short': true, 'title': `:phpcs: Code Quality ${(await codeQuality())}`, 'value': '' },
           { 'short': false, 'title': ':commits: Commits', 'value': (await getCommits()).join('\n') }
         ]
       }]
