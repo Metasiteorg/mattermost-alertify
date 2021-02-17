@@ -41,6 +41,12 @@ async function coverage () {
 
 async function tests () {
   const downloadResponse = await artifactClient.downloadArtifact('tests-junit', 'junit.xml')
+  console.log(`Download path: ${downloadResponse.downloadPath}\n`)
+  fs.readdir(downloadResponse.downloadPath, (err, files) => {
+    files.forEach(file => {
+      console.log(file)
+    })
+  })
   const junit = fs.readFileSync(downloadResponse.downloadPath, 'utf8')
   return xml2js.parseStringPromise(junit).then(function (result) {
     const meta = result.testsuites.testsuite[0].$
@@ -71,7 +77,7 @@ async function generateMessage () {
           { 'short': true, 'title': ':github: Repository:', 'value': repoName },
           { 'short': true, 'title': ':docker: Image name:', 'value': '${image_name}' },
           { 'short': true, 'title': ':git: Branch name', 'value': '' + branch + '' },
-          // { 'short': true, 'title': ':phpunit: Tests', 'value': (await tests()) },
+          { 'short': true, 'title': ':phpunit: Tests', 'value': (await tests()) },
           {
             'short': true,
             'title': ':coverage: Tests Coverage',
