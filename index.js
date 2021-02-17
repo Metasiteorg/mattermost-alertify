@@ -1,100 +1,26 @@
-const core = require('@actions/core')
-const github = require('@actions/github')
-const artifact = require('@actions/artifact')
-const axios = require('axios')
-const fs = require('fs')
-const artifactClient = artifact.create()
-const xml2js = require('xml2js')
+import {App} from './src/app';
+import {GithubApi} from './src/githubApi';
+import {ArtifactApi} from './src/artifactApi';
 
-const config = {
-  headers: {
-    'authorization': `Bearer ${core.getInput('git_token')}`,
-    'content-type': 'application/json'
-  }
-}
+const core = require('@actions/core');
+const github = require('@actions/github');
+const axios = require('axios');
+const fs = require('fs');
 
-async function getHTMLUrl (apiUrl) {
-  const response = await axios.get(apiUrl, config)
-  return response.data.html_url
-}
+const octokit = github.getOctokit(core.getInput('git_token'));
+const artifactClient = require('@actions/artifact').create();
 
-async function getCommits () {
-  try {
-    const response = await axios.get(github.context.payload.pull_request.commits_url, config)
+const App = new App(
+    github,
+    new GithubApi(github, octokit),
+    new ArtifactApi(github, artifactClient, fs),
+);
 
-    let commits = []
-    for (const item of response.data) {
-      let url = await getHTMLUrl(item.url)
-      commits.push(`:commit: ${item.committer.login}: [${item.commit.message}](${url})`)
-    }
-
-    return commits
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-async function coverage () {
-  const downloadResponse = await artifactClient.downloadArtifact('code-coverage-report', 'artifacts/storage')
-  return fs.readFileSync(`${downloadResponse.downloadPath}/coverage.txt`, 'utf8')
-}
-
-async function tests () {
-  const downloadResponse = await artifactClient.downloadArtifact('tests-junit', 'artifacts/storage')
-  const junit = fs.readFileSync(`${downloadResponse.downloadPath}/junit.xml`, 'utf8')
-
-  return xml2js.parseStringPromise(junit).then(function (result) {
-    const meta = result.testsuites.testsuite[0].$
-    return `**Tests**: ${meta.tests}\n
-      **Assertions**: ${meta.assertions}\n
-      **Errors**: ${meta.errors}\n
-      **Warnings**: ${meta.warnings} \n 
-      **Failures**: ${meta.failures} \n 
-      **Skipped**: ${meta.skipped}\b
-      **Time**: ${meta.time}`
-  })
-
-}
-
-async function codeQuality () {
-  const downloadResponse = await artifactClient.downloadArtifact('code-quality', 'artifacts/storage')
-  const data = fs.readFileSync(`${downloadResponse.downloadPath}/codequality.txt`, 'utf8')
-
-  return data.length > 1 ? ':x:' : ':white_check_mark:'
-}
-
-async function generateMessage () {
-  const repoName = `[${github.context.payload.repository.name}](${github.context.payload.repository.html_url})`
-  const prName = `[${github.context.payload.pull_request.title}](${github.context.payload.pull_request.html_url})`
-  const status = 'success'
-  const color = status === 'success' ? '#00FF00' : '#FF0000'
-  const branch = `from **${process.env.GITHUB_HEAD_REF}** to **${process.env.GITHUB_BASE_REF}**`
-
-  return {
-    'text': `### ${github.context.workflow} ${prName} ${status} ###`,
-    'username': 'Uncle Github',
-    'attachments': [
-      {
-        'color': '' + color + '',
-        'fields': [
-          { 'short': true, 'title': ':github: Repository:', 'value': repoName },
-          // { 'short': true, 'title': ':docker: Image name:', 'value': '${image_name}' },
-          { 'short': true, 'title': ':git: Branch name', 'value': '' + branch + '' },
-          { 'short': true, 'title': ':phpunit: Tests', 'value': (await tests()) },
-          { 'short': true, 'title': ':coverage: Tests Coverage', 'value': (await coverage()) },
-          { 'short': true, 'title': `:phpcs: Code Quality ${(await codeQuality())}`, 'value': '' },
-          { 'short': false, 'title': ':commits: Commits', 'value': (await getCommits()).join('\n') }
-        ]
-      }]
-  }
-}
-
-generateMessage().then((msg) => {
-  const webhook = core.getInput('mattermost_webhook')
-  axios.post(webhook, msg)
-    .then(function (response) {
-    })
-    .catch(function (error) {
-      console.log(error)
-    })
-})
+App.generate(github).then((msg) => {
+  const webhook = core.getInput('mattermost_webhook');
+  axios.post(webhook, msg).then(() => {
+    console.log('sent');
+  }).catch(function(error) {
+    console.log(error);
+  });
+});
