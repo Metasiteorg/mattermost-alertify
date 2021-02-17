@@ -36,12 +36,12 @@ async function getCommits() {
 
 async function coverage() {
     const downloadResponse = await artifactClient.downloadArtifact('code-coverage-report', 'coverage.txt')
-    return fs.readFileSync(downloadResponse.downloadPath, 'utf8');
+    return fs.readFileSync(downloadResponse.downloadPath + "coverage.txt", 'utf8');
 }
 
 async function tests() {
     const downloadResponse = await artifactClient.downloadArtifact('tests-junit', 'junit.xml')
-    const junit = fs.readFileSync(downloadResponse.downloadPath, 'utf8')
+    const junit = fs.readFileSync(downloadResponse.downloadPath + "junit.xml", 'utf8')
     return xml2js.parseStringPromise(junit).then(function (result) {
         const meta = result.testsuites.testsuite[0].$
         return `Tests: ${meta.tests} Assertions: ${meta.assertions} Errors: ${meta.errors} Warnings: ${meta.warnings} Failures: ${meta.failures} Skipped: ${meta.skipped} Time: ${meta.time}`;
@@ -51,7 +51,7 @@ async function tests() {
 
 async function codeQuality() {
     const downloadResponse = await artifactClient.downloadArtifact('code-quality', 'codequality.txt')
-    return fs.readFileSync(downloadResponse.downloadPath, 'utf8');
+    return fs.readFileSync(downloadResponse.downloadPath + "codequality.txt", 'utf8');
 }
 
 async function generateMessage() {
