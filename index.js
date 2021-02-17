@@ -40,9 +40,15 @@ async function coverage () {
 }
 
 async function tests () {
-  const downloadResponse = await artifactClient.downloadArtifact('tests-junit', '/tmp')
-  console.log(`Download path: ${downloadResponse.downloadPath + '/junit.xml'}\n`)
-  const junit = fs.readFileSync(downloadResponse.downloadPath + '/junit.xml', 'utf8')
+  const downloadResponse = await artifactClient.downloadArtifact('tests-junit', '/artifacts')
+  console.log(`Download path: ${downloadResponse.downloadPath + '/' + downloadResponse.artifactName}\n`)
+
+  fs.readdirSync('/artifacts').forEach(file => {
+    console.log(file)
+  })
+
+  const junit = fs.readFileSync(downloadResponse.downloadPath + '/' + downloadResponse.artifactName, 'utf8')
+
   return xml2js.parseStringPromise(junit).then(function (result) {
     const meta = result.testsuites.testsuite[0].$
     return `Tests: ${meta.tests} Assertions: ${meta.assertions} Errors: ${meta.errors} Warnings: ${meta.warnings} Failures: ${meta.failures} Skipped: ${meta.skipped} Time: ${meta.time}`
