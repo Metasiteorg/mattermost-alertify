@@ -21,8 +21,8 @@ jobs:
     needs: [ job-which-fails, job-which-succeeds ]
     steps:
     - uses: actions/checkout@v2
-#      with:
-#        path: mattermost-alertify
+      with:
+        path: mattermost-alertify
     - uses: ./
       with:
         mattermost_webhook: ${{ secrets.MATTERMOST_WEBHOOK }}
