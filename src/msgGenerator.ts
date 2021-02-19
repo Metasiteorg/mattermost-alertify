@@ -6,7 +6,7 @@ import {ArtifactApi} from './artifactApi'
 import {BaseTemplate} from './templates/baseTemplate'
 
 export class MsgGenerator {
-  private readonly templates: any
+  private readonly templates: {[key: string]: BaseTemplate}
 
   constructor(
     context: Context,
@@ -14,7 +14,7 @@ export class MsgGenerator {
     artifactApi: ArtifactApi
   ) {
     this.templates = {
-      push: new PushTemplate(context, artifactApi, githubApi),
+      test: new PushTemplate(context, artifactApi, githubApi),
       pull_request: new PullRequestTemplate(context, artifactApi, githubApi)
     }
   }

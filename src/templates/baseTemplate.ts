@@ -2,7 +2,7 @@ import {Context} from '@actions/github/lib/context'
 import {ArtifactApi} from '../artifactApi'
 import {GithubApi} from '../githubApi'
 
-export class BaseTemplate {
+export abstract class BaseTemplate {
   protected readonly context: Context
   protected readonly artifactApi: ArtifactApi
   protected readonly githubApi: GithubApi
@@ -22,7 +22,5 @@ export class BaseTemplate {
     return status ? '#00FF00' : '#FF0000'
   }
 
-  public get(): Promise<object> {
-    return new Promise(() => {})
-  }
+  public abstract get(): Promise<object>
 }
