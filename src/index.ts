@@ -20,7 +20,7 @@ const App = new MsgGenerator.MsgGenerator(
 App.generate(github.context).then(msg => {
   const webhook = core.getInput('mattermost_webhook')
   axios
-    .post(webhook, msg)
+    .post(webhook, JSON.stringify(msg))
     .then(() => {
       console.log('sent')
     })
