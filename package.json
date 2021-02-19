@@ -10,18 +10,11 @@
     "url": "git+https://github.com/Metasiteorg/mattermost-alertify.git"
   },
   "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Metasiteorg/mattermost-alertify/issues"
-  },
-  "homepage": "https://github.com/Metasiteorg/mattermost-alertify#readme",
+  "license": "MIT",
   "dependencies": {
     "@actions/artifact": "^0.5.0",
     "@actions/core": "^1.2.6",
-    "@actions/github": "^4.0.0",
-    "axios": "^0.21.1",
-    "fs": "^0.0.1-security",
-    "xml2js": "^0.4.23"
+    "@actions/github": "^4.0.0"
   },
   "devDependencies": {
     "@octokit/webhooks": "^8.4.1",
@@ -30,16 +23,19 @@
     "@typescript-eslint/eslint-plugin": "^4.15.0",
     "@typescript-eslint/parser": "^4.15.1",
     "@vercel/ncc": "^0.27.0",
+    "axios": "^0.21.1",
     "eslint": "^7.20.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-github": "^4.1.1",
+    "fs": "^0.0.1-security",
     "prettier": "^2.2.1",
-    "typescript": "^4.1.5"
+    "typescript": "^4.1.5",
+    "xml2js": "^0.4.23"
   },
   "scripts": {
     "build": "tsc",
     "lint": "eslint src/**/*.ts",
-    "package": "ncc build --source-map",
-    "deploy": "npm run build && npm run package"
+    "package": "ncc build --source-map --license licenses.txt",
+    "deploy": "yarn run build && yarn run package"
   }
 }
