@@ -1,7 +1,4 @@
 import {BaseTemplate} from './baseTemplate.js'
-import * as Webhooks from '@octokit/webhooks'
-import * as core from '@actions/core'
-import * as github from '@actions/github'
 
 export class PullRequestTemplate extends BaseTemplate {
   async get(): Promise<object> {

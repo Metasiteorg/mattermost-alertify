@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "lib/index.js",
-  "type": "module",
   "private": true,
   "repository": {
     "type": "git",
@@ -35,7 +34,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint src/**/*.ts",
-    "package": "ncc build --source-map --license licenses.txt",
+    "package": "ncc build --source-map -m --license licenses.txt",
     "deploy": "yarn run build && yarn run package"
   }
 }
