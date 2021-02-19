@@ -4,6 +4,7 @@
   "description": "",
   "main": "lib/index.js",
   "type": "module",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Metasiteorg/mattermost-alertify.git"

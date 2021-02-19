@@ -2,7 +2,7 @@ name: 'Metasite Mattermost Alertify'
 description: 'Report CI status to mattermost'
 runs:
   using: 'node12'
-  main: 'lib/index.js'
+  main: 'dist/index.js'
 inputs:
   mattermost_webhook:
     description: 'mattermost webhook url'
