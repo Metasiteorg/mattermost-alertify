@@ -36,26 +36,59 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BaseTemplate = void 0;
-var BaseTemplate = /** @class */ (function () {
-    function BaseTemplate(github, artifactApi, githubApi) {
+exports.ArtifactApi = void 0;
+var ArtifactApi = /** @class */ (function () {
+    function ArtifactApi(github, client, fs) {
         this.github = github;
-        this.artifactApi = artifactApi;
-        this.githubApi = githubApi;
+        this.client = client;
+        this.fs = fs;
     }
-    BaseTemplate.prototype.getColor = function () {
+    ArtifactApi.prototype.coverage = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var status;
+            var downloadResponse;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.githubApi.getStatus()];
+                    case 0: return [4 /*yield*/, this.client.downloadArtifact('code-coverage-report', 'artifacts/storage')];
                     case 1:
-                        status = _a.sent();
-                        return [2 /*return*/, status ? '#00FF00' : '#FF0000'];
+                        downloadResponse = _a.sent();
+                        return [2 /*return*/, this.fs.readFileSync(downloadResponse.downloadPath + "/coverage.txt", 'utf8')];
                 }
             });
         });
     };
-    return BaseTemplate;
+    ArtifactApi.prototype.tests = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var downloadResponse, junit;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.client.downloadArtifact('tests-junit', 'artifacts/storage')];
+                    case 1:
+                        downloadResponse = _a.sent();
+                        junit = this.fs.readFileSync(downloadResponse.downloadPath + "/junit.xml", 'utf8');
+                        return [2 /*return*/, require('xml2js').
+                                parseStringPromise(junit).
+                                then(function (result) {
+                                var meta = result.testsuites.testsuite[0].$;
+                                return "**Tests**: " + meta.tests + "\n\n      **Assertions**: " + meta.assertions + "\n\n      **Errors**: " + meta.errors + "\n\n      **Warnings**: " + meta.warnings + " \n \n      **Failures**: " + meta.failures + " \n \n      **Skipped**: " + meta.skipped + "\b\n      **Time**: " + meta.time;
+                            })];
+                }
+            });
+        });
+    };
+    ArtifactApi.prototype.codeQuality = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var downloadResponse, data;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.client.downloadArtifact('code-quality', 'artifacts/storage')];
+                    case 1:
+                        downloadResponse = _a.sent();
+                        data = this.fs.readFileSync(downloadResponse.downloadPath + "/codequality.txt", 'utf8');
+                        return [2 /*return*/, data.length > 1 ? ':x:' : ':white_check_mark:'];
+                }
+            });
+        });
+    };
+    return ArtifactApi;
 }());
-exports.BaseTemplate = BaseTemplate;
+exports.ArtifactApi = ArtifactApi;

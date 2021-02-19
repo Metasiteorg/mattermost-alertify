@@ -48,7 +48,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.PullRequestTemplate = void 0;
 var baseTemplate_js_1 = require("./baseTemplate.js");
 var PullRequestTemplate = /** @class */ (function (_super) {
@@ -77,12 +77,15 @@ var PullRequestTemplate = /** @class */ (function (_super) {
                             'title': this.github.context.workflow + " " + prName + " " + status
                         };
                         _b = 'fields';
-                        _c = [{ 'short': true, 'title': ':github: Repository:', 'value': repoName },
-                            // { 'short': true, 'title': ':docker: Image name:', 'value': '${image_name}' },
+                        _c = [{
+                                'short': true,
+                                'title': ':github: Repository:',
+                                'value': repoName,
+                            },
                             {
                                 'short': true,
                                 'title': ':git: Branch name',
-                                'value': '' + branch + ''
+                                'value': '' + branch + '',
                             }];
                         _k = {
                             'short': true,
@@ -120,7 +123,7 @@ var PullRequestTemplate = /** @class */ (function (_super) {
                                 {
                                     'short': false,
                                     'title': ':commits: Commits',
-                                    'value': ''
+                                    'value': '',
                                 }
                             ]),
                                 _j)

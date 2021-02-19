@@ -36,26 +36,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BaseTemplate = void 0;
-var BaseTemplate = /** @class */ (function () {
-    function BaseTemplate(github, artifactApi, githubApi) {
-        this.github = github;
-        this.artifactApi = artifactApi;
-        this.githubApi = githubApi;
+exports.MsgGenerator = void 0;
+var push_js_1 = require("./templates/push.js");
+var pullRequest_js_1 = require("./templates/pullRequest.js");
+var MsgGenerator = /** @class */ (function () {
+    function MsgGenerator(github, githubapi, artifactapi) {
+        this.templates = {
+            'push': new push_js_1.PushTemplate(github, artifactapi, githubapi),
+            'pull_request': new pullRequest_js_1.PullRequestTemplate(github, artifactapi, githubapi),
+        };
     }
-    BaseTemplate.prototype.getColor = function () {
+    MsgGenerator.prototype.generate = function (github) {
         return __awaiter(this, void 0, void 0, function () {
-            var status;
+            var template;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.githubApi.getStatus()];
-                    case 1:
-                        status = _a.sent();
-                        return [2 /*return*/, status ? '#00FF00' : '#FF0000'];
+                template = this.templates[github.context.eventName];
+                if (template !== null) {
+                    return [2 /*return*/, template.get()];
                 }
+                return [2 /*return*/];
             });
         });
     };
-    return BaseTemplate;
+    return MsgGenerator;
 }());
-exports.BaseTemplate = BaseTemplate;
+exports.MsgGenerator = MsgGenerator;

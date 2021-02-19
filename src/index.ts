@@ -1,26 +1,30 @@
-import {MsgGenerator} from './msgGenerator';
-import {GithubApi} from './githubApi';
-import {ArtifactApi} from './artifactApi';
+import {MsgGenerator} from './msgGenerator'
+import {GithubApi} from './githubApi'
+import {ArtifactApi} from './artifactApi'
+import * as core from '@actions/core'
+import * as github from '@actions/github'
+import * as artifact from '@actions/artifact'
+import * as fs from 'fs'
+import axios from 'axios'
+import * as parser from 'xml2js'
 
-const core = require('@actions/core');
-const github = require('@actions/github');
-const axios = require('axios');
-const fs = require('fs');
-
-const octokit = github.getOctokit(core.getInput('git_token'));
-const artifactClient = require('@actions/artifact').create();
+const octokit = github.getOctokit(core.getInput('git_token'))
+const artifactClient = artifact.create()
 
 const App = new MsgGenerator(
-    github,
-    new GithubApi(github, octokit),
-    new ArtifactApi(github, artifactClient, fs),
-);
+  github.context,
+  new GithubApi(github.context, octokit),
+  new ArtifactApi(artifactClient, fs.readFileSync, parser.parseStringPromise)
+)
 
-App.generate(github).then((msg) => {
-  const webhook = core.getInput('mattermost_webhook');
-  axios.post(webhook, msg).then(() => {
-    console.log('sent');
-  }).catch(function(error) {
-    console.log(error);
-  });
-});
+App.generate(github.context).then(msg => {
+  const webhook = core.getInput('mattermost_webhook')
+  axios
+    .post(webhook, msg)
+    .then(() => {
+      console.log('sent')
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
+})

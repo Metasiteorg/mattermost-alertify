@@ -1,20 +1,28 @@
-import {PushTemplate} from './templates/push.js';
-import {PullRequestTemplate} from './templates/pullRequest.js';
+import {PushTemplate} from './templates/push.js'
+import {PullRequestTemplate} from './templates/pullRequest.js'
+import {Context} from '@actions/github/lib/context'
+import {GithubApi} from './githubApi'
+import {ArtifactApi} from './artifactApi'
+import {BaseTemplate} from './templates/baseTemplate'
 
 export class MsgGenerator {
-  templates
+  private readonly templates: any
 
-  constructor(github, githubapi, artifactapi) {
+  constructor(
+    context: Context,
+    githubApi: GithubApi,
+    artifactApi: ArtifactApi
+  ) {
     this.templates = {
-      'push': new PushTemplate(github, artifactapi, githubapi),
-      'pull_request': new PullRequestTemplate(github, artifactapi, githubapi),
-    };
+      push: new PushTemplate(context, artifactApi, githubApi),
+      pull_request: new PullRequestTemplate(context, artifactApi, githubApi)
+    }
   }
 
-  async generate(github) {
-    const template = this.templates[github.context.eventName];
+  async generate(context: Context) {
+    const template: BaseTemplate = this.templates[context.eventName]
     if (template !== null) {
-      return template.get();
+      return template.get()
     }
   }
 }

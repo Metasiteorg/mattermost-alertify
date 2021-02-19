@@ -36,26 +36,32 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BaseTemplate = void 0;
-var BaseTemplate = /** @class */ (function () {
-    function BaseTemplate(github, artifactApi, githubApi) {
+exports.GithubApi = void 0;
+var GithubApi = /** @class */ (function () {
+    function GithubApi(github, octokit) {
         this.github = github;
-        this.artifactApi = artifactApi;
-        this.githubApi = githubApi;
+        this.octokit = octokit;
     }
-    BaseTemplate.prototype.getColor = function () {
+    GithubApi.prototype.getStatus = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var status;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.githubApi.getStatus()];
-                    case 1:
-                        status = _a.sent();
-                        return [2 /*return*/, status ? '#00FF00' : '#FF0000'];
-                }
+                this.octokit.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs', {
+                    owner: this.github.context.repo.owner,
+                    repo: this.github.context.repo.repo,
+                    run_id: process.env.GITHUB_RUN_ID,
+                }).then(function (data) {
+                    for (var _i = 0, _a = data.jobs; _i < _a.length; _i++) {
+                        var job = _a[_i];
+                        if (job.conclusion === 'failure') {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+                return [2 /*return*/];
             });
         });
     };
-    return BaseTemplate;
+    return GithubApi;
 }());
-exports.BaseTemplate = BaseTemplate;
+exports.GithubApi = GithubApi;
