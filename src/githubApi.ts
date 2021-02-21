@@ -10,6 +10,16 @@ export class GithubApi {
     this.octokit = octokit
   }
 
+  public async getJobs() {
+    return this.octokit.request(
+      'GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs',
+      {
+        ...this.context.repo,
+        run_id: Number(process.env.GITHUB_RUN_ID)
+      }
+    )
+  }
+
   public async getStatus(): Promise<boolean> {
     return this.octokit
       .request('GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs', {

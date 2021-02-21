@@ -38,12 +38,12 @@ export class ArtifactApi {
     return this.parser(junit).then(function (result) {
       const meta = result.testsuites.testsuite[0].$
       return `**Tests**: ${meta.tests}\n
-      **Assertions**: ${meta.assertions}\n
-      **Errors**: ${meta.errors}\n
-      **Warnings**: ${meta.warnings} \n 
-      **Failures**: ${meta.failures} \n 
-      **Skipped**: ${meta.skipped}\b
-      **Time**: ${meta.time}`
+**Assertions**: ${meta.assertions}\n
+**Errors**: ${meta.errors}\n
+**Warnings**: ${meta.warnings} \n 
+**Failures**: ${meta.failures} \n 
+**Skipped**: ${meta.skipped}\b
+**Time**: ${meta.time}`
     })
   }
 
