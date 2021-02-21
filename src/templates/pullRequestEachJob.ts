@@ -2,8 +2,6 @@ import {BaseTemplate} from './baseTemplate'
 
 export class pullRequestEachJob extends BaseTemplate {
   async get(): Promise<object> {
-    const artifacts = (await this.githubApi.getArtifacts()).data.artifacts
-
     const jobs = (await this.githubApi.getJobs()).data.jobs.filter(job => {
       return job.status === 'completed'
     })
@@ -15,8 +13,9 @@ export class pullRequestEachJob extends BaseTemplate {
 
       let fields = []
       for (const name in artifactFiles) {
+        const [title] = name.replace('-', ' ').split('.')
         fields.push({
-          title: name,
+          title: title,
           value: artifactFiles[name]
         })
       }
