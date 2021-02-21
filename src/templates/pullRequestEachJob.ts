@@ -2,9 +2,7 @@ import {BaseTemplate} from './baseTemplate'
 
 export class pullRequestEachJob extends BaseTemplate {
   async get(): Promise<object> {
-    const results = await this.githubApi.getJobs()
-    let jobs = results.data.jobs
-    jobs = jobs.filter(job => {
+    const jobs = (await this.githubApi.getJobs()).data.jobs.filter(job => {
       return job.status === 'completed'
     })
 
@@ -17,8 +15,10 @@ export class pullRequestEachJob extends BaseTemplate {
       })
     }
 
+    const prName = `[${this.context.payload.pull_request?.title}](${this.context.payload.pull_request?.html_url})`
     return {
       username: 'Uncle Github',
+      text: `${prName}(${process.env.GITHUB_HEAD_REF} -> ${process.env.GITHUB_BASE_REF})`,
       attachments: attachments
     }
   }
