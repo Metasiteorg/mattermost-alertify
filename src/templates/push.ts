@@ -50,7 +50,6 @@ export class PushTemplate extends BaseTemplate {
               short: false,
               title: ':commits: Commits',
               value: 'test'
-              // 'value': (await getCommits()).join('\n'),
             }
           ]
         }

@@ -25,6 +25,6 @@ App.generate(github.context).then(msg => {
       console.log('sent')
     })
     .catch(function (error) {
-      console.log(error)
+      core.error(error)
     })
 })

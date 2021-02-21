@@ -4,16 +4,16 @@ export class PullRequestTemplate extends BaseTemplate {
   async get(): Promise<object> {
     const repoName = `[${this.context.payload.repository?.name}](${this.context.payload.repository?.html_url})`
     const prName = `[${this.context.payload.pull_request?.title}](${this.context.payload.pull_request?.html_url})`
-    const status = 'success'
     const branch = `from **${process.env.GITHUB_HEAD_REF}** to **${process.env.GITHUB_BASE_REF}**`
+    //${this.context.workflow}
 
     return {
-      text: `### ${this.context.workflow} ${prName} ${status} ###`,
       username: 'Uncle Github',
       attachments: [
         {
-          color: this.getColor(),
-          title: `${this.context.workflow} ${prName} ${status}`,
+          color: await this.getColor(),
+          title: this.context.payload.pull_request?.title,
+          title_link: this.context.payload.pull_request?.html_url,
           fields: [
             {
               short: true,
@@ -23,7 +23,7 @@ export class PullRequestTemplate extends BaseTemplate {
             {
               short: true,
               title: ':git: Branch name',
-              value: '' + branch + ''
+              value: branch
             },
             {
               short: true,
@@ -44,7 +44,6 @@ export class PullRequestTemplate extends BaseTemplate {
               short: false,
               title: ':commits: Commits',
               value: ''
-              // 'value': (await getCommits()).join('\n'),
             }
           ]
         }
