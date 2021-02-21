@@ -20,6 +20,16 @@ export class GithubApi {
     )
   }
 
+  public async getArtifacts() {
+    return await this.octokit.request(
+      'GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts',
+      {
+        ...this.context.repo,
+        run_id: Number(process.env.GITHUB_RUN_ID)
+      }
+    )
+  }
+
   public async getStatus(): Promise<boolean> {
     return this.octokit
       .request('GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs', {

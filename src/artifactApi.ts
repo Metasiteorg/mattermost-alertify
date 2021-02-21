@@ -1,20 +1,63 @@
 import {ArtifactClient} from '@actions/artifact'
-import {readFileSync} from 'fs'
+import {readdir, readdirSync, readFileSync} from 'fs'
 import {parseStringPromise} from 'xml2js'
 
 export class ArtifactApi {
   private readonly client: ArtifactClient
   private readonly reader: typeof readFileSync
   private readonly parser: typeof parseStringPromise
+  private readonly path: string
+  private readonly dirReader: typeof readdirSync
 
   constructor(
     client: ArtifactClient,
     reader: typeof readFileSync,
-    parser: typeof parseStringPromise
+    parser: typeof parseStringPromise,
+    dirReader: typeof readdirSync
   ) {
     this.client = client
     this.reader = reader
     this.parser = parser
+    this.path = 'artifacts/storage'
+    this.dirReader = dirReader
+  }
+
+  async getArtifacts(name: string): Promise<{[key: string]: string}> {
+    const response = await this.client.downloadArtifact(name, this.path)
+    const files = this.dirReader(response.downloadPath)
+
+    let artifacts: {[key: string]: string} = {}
+
+    for (const filename of files) {
+      artifacts[filename] = this.reader(
+        `${response.downloadPath}/${filename}`,
+        'utf8'
+      )
+    }
+
+    return artifacts
+  }
+
+  async junitArtifactContent(name: string): Promise<string> {
+    const downloadResponse = await this.client.downloadArtifact(
+      'tests-junit',
+      'artifacts/storage'
+    )
+    const junit = this.reader(
+      `${downloadResponse.downloadPath}/junit.xml`,
+      'utf8'
+    )
+
+    return this.parser(junit).then(function (result) {
+      const meta = result.testsuites.testsuite[0].$
+      return `**Tests**: ${meta.tests}\n
+**Assertions**: ${meta.assertions}\n
+**Errors**: ${meta.errors}\n
+**Warnings**: ${meta.warnings} \n 
+**Failures**: ${meta.failures} \n 
+**Skipped**: ${meta.skipped}\b
+**Time**: ${meta.time}`
+    })
   }
 
   async coverage() {

@@ -14,7 +14,12 @@ const artifactClient = artifact.create()
 const App = new MsgGenerator(
   github.context,
   new GithubApi(github.context, octokit),
-  new ArtifactApi(artifactClient, fs.readFileSync, parser.parseStringPromise)
+  new ArtifactApi(
+    artifactClient,
+    fs.readFileSync,
+    parser.parseStringPromise,
+    fs.readdirSync
+  )
 )
 
 App.generate(github.context).then(msg => {
