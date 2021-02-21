@@ -18,7 +18,8 @@ export class pullRequestEachJob extends BaseTemplate {
     }
 
     return {
-      username: 'Uncle Github'
+      username: 'Uncle Github',
+      attachments: attachments
     }
   }
 }
