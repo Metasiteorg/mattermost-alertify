@@ -1,15 +1,11 @@
 import {Context} from '@actions/github/lib/context'
 import {GitHub} from '@actions/github/lib/utils'
-import internal from 'stream'
 
 export class GithubApi {
-  private readonly context
-  private readonly octokit: InstanceType<typeof GitHub>
-
-  constructor(context: Context, octokit: InstanceType<typeof GitHub>) {
-    this.context = context
-    this.octokit = octokit
-  }
+  constructor(
+    private readonly context: Context,
+    private readonly octokit: InstanceType<typeof GitHub>
+  ) {}
 
   public async getJobs() {
     return this.octokit.request(

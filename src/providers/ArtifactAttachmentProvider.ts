@@ -1,8 +1,14 @@
-import {BaseTemplate} from './baseTemplate'
 import {parseJunit} from '../junitParser'
+import {GithubApi} from '../githubApi'
+import {ArtifactApi} from '../artifactApi'
 
-export class eachJob extends BaseTemplate {
-  async get(): Promise<object> {
+export class ArtifactAttachmentProvider implements AttachmentProviderInterface {
+  constructor(
+    private readonly githubApi: GithubApi,
+    private readonly artifactApi: ArtifactApi
+  ) {}
+
+  async get(): Promise<object[]> {
     const jobs = (await this.githubApi.getJobs()).data.jobs.filter(job => {
       return job.status === 'completed'
     })
@@ -34,21 +40,6 @@ export class eachJob extends BaseTemplate {
       })
     }
 
-    let commits: string[] = []
-    if (this.context.payload.pull_request?.number) {
-      commits = await this.githubApi.getPullRequestCommits(
-        this.context.payload.pull_request?.number
-      )
-    }
-
-    const prName = `[${this.context.payload.pull_request?.title}](${this.context.payload.pull_request?.html_url})`
-    return {
-      username: 'Uncle Github',
-      text: `${this.context.workflow} ${prName} (\`${process.env.GITHUB_HEAD_REF}\` -> \`${process.env.GITHUB_BASE_REF})\``,
-      attachments: attachments,
-      props: {
-        card: commits.join('\n')
-      }
-    }
+    return attachments
   }
 }

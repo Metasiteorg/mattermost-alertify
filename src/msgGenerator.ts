@@ -1,29 +1,15 @@
-import {PushTemplate} from './templates/push.js'
-import {PullRequestTemplate} from './templates/pullRequest.js'
 import {Context} from '@actions/github/lib/context'
-import {GithubApi} from './githubApi'
-import {ArtifactApi} from './artifactApi'
-import {BaseTemplate} from './templates/baseTemplate'
-import {eachJob} from './templates/eachJob'
 
 export class MsgGenerator {
-  private readonly templates: {[key: string]: BaseTemplate}
-
   constructor(
-    context: Context,
-    githubApi: GithubApi,
-    artifactApi: ArtifactApi
-  ) {
-    this.templates = {
-      push: new eachJob(context, artifactApi, githubApi),
-      pull_request: new eachJob(context, artifactApi, githubApi)
+    private readonly templates: {
+      [key: string]: () => Promise<TemplateInterface>
     }
-  }
+  ) {}
 
-  async generate(context: Context) {
-    const template: BaseTemplate = this.templates[context.eventName]
-    if (template !== null) {
-      return template.get()
-    }
+  async generate(context: Context): Promise<object> {
+    return this.templates[context.eventName]().then(template => {
+      return template.generate(context.workflow, context.eventName)
+    })
   }
 }

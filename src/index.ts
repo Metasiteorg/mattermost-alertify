@@ -6,40 +6,54 @@ import * as github from '@actions/github'
 import * as artifact from '@actions/artifact'
 import * as fs from 'fs'
 import axios from 'axios'
-import * as parser from 'xml2js'
+import './string.impl'
+import {EveryJobTemplateFactory} from './templates/everyJobTemplateFactory'
+import {ArtifactAttachmentProvider} from './providers/ArtifactAttachmentProvider'
+import {PushCommitsProvider} from './providers/PushCommitsProvider'
+import {PullRequestCommitsProvider} from './providers/PullRequestCommitsProvider'
+import {PullRequestDataProvider} from './providers/PullRequestDataProvider'
+import {PushDataProvider} from './providers/PushDataProvider'
 
-String.prototype.ucFirstAll = function (this: string) {
-  return this.replace(/\w\S*/g, txt => {
-    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+async function start() {
+  const octokit = github.getOctokit(core.getInput('git_token'))
+  const githubApi = new GithubApi(github.context, octokit)
+  const artifactApi = new ArtifactApi(
+    artifact.create(),
+    fs.readFileSync,
+    fs.readdirSync
+  )
+
+  const App = new MsgGenerator({
+    push: () => {
+      return EveryJobTemplateFactory.createFromProviders(
+        new PushCommitsProvider(),
+        new ArtifactAttachmentProvider(githubApi, artifactApi),
+        new PullRequestDataProvider(github.context)
+      )
+    },
+    pull_request: () => {
+      return EveryJobTemplateFactory.createFromProviders(
+        new PullRequestCommitsProvider(github.context, githubApi),
+        new ArtifactAttachmentProvider(githubApi, artifactApi),
+        new PushDataProvider()
+      )
+    }
+  })
+
+  App.generate(github.context).then(msg => {
+    axios
+      .post(core.getInput('mattermost_webhook'), JSON.stringify(msg), {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(() => {
+        console.log('sent')
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
   })
 }
 
-const octokit = github.getOctokit(core.getInput('git_token'))
-const artifactClient = artifact.create()
-
-const App = new MsgGenerator(
-  github.context,
-  new GithubApi(github.context, octokit),
-  new ArtifactApi(
-    artifactClient,
-    fs.readFileSync,
-    parser.parseStringPromise,
-    fs.readdirSync
-  )
-)
-
-App.generate(github.context).then(msg => {
-  const webhook = core.getInput('mattermost_webhook')
-  axios
-    .post(webhook, JSON.stringify(msg), {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(() => {
-      console.log('sent')
-    })
-    .catch(function (error) {
-      console.log(error)
-    })
-})
+start().then(() => console.log('success'))
