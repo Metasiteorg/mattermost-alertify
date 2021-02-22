@@ -1,4 +1,5 @@
 import {BaseTemplate} from './baseTemplate'
+import {parseJunit} from '../junitParser'
 
 export class pullRequestEachJob extends BaseTemplate {
   async get(): Promise<object> {
@@ -14,10 +15,14 @@ export class pullRequestEachJob extends BaseTemplate {
       let fields = []
       for (const name in artifactFiles) {
         const [title] = name.replace('-', ' ').ucFirstAll().split('.')
+
         fields.push({
           short: true,
           title: title,
-          value: artifactFiles[name]
+          value:
+            title === 'Junit'
+              ? parseJunit(artifactFiles[name])
+              : artifactFiles[name]
         })
       }
 
