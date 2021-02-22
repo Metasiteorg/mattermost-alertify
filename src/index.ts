@@ -28,14 +28,14 @@ async function start() {
       return EveryJobTemplateFactory.createFromProviders(
         new PushCommitsProvider(),
         new ArtifactAttachmentProvider(githubApi, artifactApi),
-        new PullRequestDataProvider(github.context)
+        new PushDataProvider(github.context)
       )
     },
     pull_request: () => {
       return EveryJobTemplateFactory.createFromProviders(
         new PullRequestCommitsProvider(github.context, githubApi),
         new ArtifactAttachmentProvider(githubApi, artifactApi),
-        new PushDataProvider(github.context)
+        new PullRequestDataProvider(github.context)
       )
     }
   })
