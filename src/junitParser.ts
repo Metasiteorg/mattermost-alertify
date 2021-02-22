@@ -5,8 +5,9 @@ export function parseJunit(junit: string): Promise<string> {
     const meta = result.testsuites.testsuite[0].$
 
     return `
-    | Tests | Assertions | Errors | Warnings | Failures | Skipped | Time |
+| Tests | Assertions | Errors | Warnings | Failures | Skipped | Time |
 |-------|------------|------------|----------|----------|---------|------|
-| ${meta.tests} | ${meta.assertions} | ${meta.errors} | ${meta.warnings} | ${meta.failures} | ${meta.skipped} | ${meta.time} |`
+| ${meta.tests} | ${meta.assertions} | ${meta.errors} | ${meta.warnings} | ${meta.failures} | ${meta.skipped} | ${meta.time} |
+`
   })
 }
