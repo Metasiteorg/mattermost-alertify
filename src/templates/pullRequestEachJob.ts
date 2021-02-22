@@ -13,7 +13,7 @@ export class pullRequestEachJob extends BaseTemplate {
 
       let fields = []
       for (const name in artifactFiles) {
-        const [title] = name.replace('-', ' ').split('.')
+        const [title] = name.replace('-', ' ').ucFirstAll().split('.')
         fields.push({
           short: true,
           title: title,

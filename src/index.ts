@@ -8,6 +8,12 @@ import * as fs from 'fs'
 import axios from 'axios'
 import * as parser from 'xml2js'
 
+String.prototype.ucFirstAll = function (this: string) {
+  return this.replace(/\w\S*/g, txt => {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+  })
+}
+
 const octokit = github.getOctokit(core.getInput('git_token'))
 const artifactClient = artifact.create()
 
