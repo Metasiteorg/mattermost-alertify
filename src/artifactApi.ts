@@ -38,28 +38,6 @@ export class ArtifactApi {
     return artifacts
   }
 
-  async junitArtifactContent(name: string): Promise<string> {
-    const downloadResponse = await this.client.downloadArtifact(
-      'tests-junit',
-      'artifacts/storage'
-    )
-    const junit = this.reader(
-      `${downloadResponse.downloadPath}/junit.xml`,
-      'utf8'
-    )
-
-    return this.parser(junit).then(function (result) {
-      const meta = result.testsuites.testsuite[0].$
-      return `**Tests**: ${meta.tests}\n
-**Assertions**: ${meta.assertions}\n
-**Errors**: ${meta.errors}\n
-**Warnings**: ${meta.warnings} \n 
-**Failures**: ${meta.failures} \n 
-**Skipped**: ${meta.skipped}\b
-**Time**: ${meta.time}`
-    })
-  }
-
   async coverage() {
     const downloadResponse = await this.client.downloadArtifact(
       'code-coverage-report',

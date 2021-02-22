@@ -1,7 +1,7 @@
 import {BaseTemplate} from './baseTemplate'
 import {parseJunit} from '../junitParser'
 
-export class pullRequestEachJob extends BaseTemplate {
+export class eachJob extends BaseTemplate {
   async get(): Promise<object> {
     const jobs = (await this.githubApi.getJobs()).data.jobs.filter(job => {
       return job.status === 'completed'
@@ -34,11 +34,21 @@ export class pullRequestEachJob extends BaseTemplate {
       })
     }
 
+    let commits: string[] = []
+    if (this.context.payload.pull_request?.number) {
+      commits = await this.githubApi.getPullRequestCommits(
+        this.context.payload.pull_request?.number
+      )
+    }
+
     const prName = `[${this.context.payload.pull_request?.title}](${this.context.payload.pull_request?.html_url})`
     return {
       username: 'Uncle Github',
       text: `${this.context.workflow} ${prName} (\`${process.env.GITHUB_HEAD_REF}\` -> \`${process.env.GITHUB_BASE_REF})\``,
-      attachments: attachments
+      attachments: attachments,
+      props: {
+        card: commits.join('\n')
+      }
     }
   }
 }

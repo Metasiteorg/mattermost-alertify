@@ -1,5 +1,6 @@
 import {Context} from '@actions/github/lib/context'
 import {GitHub} from '@actions/github/lib/utils'
+import internal from 'stream'
 
 export class GithubApi {
   private readonly context
@@ -20,14 +21,17 @@ export class GithubApi {
     )
   }
 
-  public async getArtifacts() {
-    return await this.octokit.request(
-      'GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts',
-      {
+  public async getPullRequestCommits(pullRequestID: number) {
+    return this.octokit
+      .request('GET /repos/{owner}/{repo}/pulls/{pull_number}/commits', {
         ...this.context.repo,
-        run_id: Number(process.env.GITHUB_RUN_ID)
-      }
-    )
+        pull_number: pullRequestID
+      })
+      .then(data => {
+        return data.data.map(commit => {
+          return `* [${commit.committer?.login}](${commit.committer?.html_url}): [${commit.commit.message}](${commit.html_url})`
+        })
+      })
   }
 
   public async getStatus(): Promise<boolean> {
