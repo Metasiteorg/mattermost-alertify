@@ -21,7 +21,7 @@ export class pullRequestEachJob extends BaseTemplate {
           title: title,
           value:
             title === 'Junit'
-              ? parseJunit(artifactFiles[name])
+              ? await parseJunit(artifactFiles[name])
               : artifactFiles[name]
         })
       }
@@ -37,7 +37,7 @@ export class pullRequestEachJob extends BaseTemplate {
     const prName = `[${this.context.payload.pull_request?.title}](${this.context.payload.pull_request?.html_url})`
     return {
       username: 'Uncle Github',
-      text: `Pull Request ${prName} (\`${process.env.GITHUB_HEAD_REF}\` -> \`${process.env.GITHUB_BASE_REF})\``,
+      text: `${this.context.workflow} ${prName} (\`${process.env.GITHUB_HEAD_REF}\` -> \`${process.env.GITHUB_BASE_REF})\``,
       attachments: attachments
     }
   }
