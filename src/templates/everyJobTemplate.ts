@@ -10,9 +10,7 @@ export class EveryJobTemplate implements TemplateInterface {
   async generate(name: string, workflow: string): Promise<object> {
     return {
       username: 'Uncle Github',
-      text: `${name} ${workflow} (\`${process.env.GITHUB_HEAD_REF}\` -> \`${process.env.GITHUB_BASE_REF})\``,
-      title: this.data.title,
-      title_link: this.data.titleUrl,
+      text: `${name} ${workflow} ${this.data.title} ${this.data.branch}`,
       attachments: this.attachments,
       props: {
         card: this.commits.join('\n')

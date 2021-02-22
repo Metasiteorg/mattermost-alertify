@@ -6,12 +6,8 @@ export class PullRequestDataProvider implements DataProviderInterface {
 
   get(): MsgData {
     return {
-      title: this.context.payload.pull_request?.title
-        ? this.context.payload.pull_request.title
-        : '<No Pull Request data>',
-      titleUrl: this.context.payload.pull_request?.html_url
-        ? this.context.payload.pull_request.html_url
-        : '#'
+      title: `[${this.context.payload.pull_request?.title}](${this.context.payload.pull_request?.html_url})`,
+      branch: `(\`${process.env.GITHUB_HEAD_REF}\` -> \`${process.env.GITHUB_BASE_REF}\`)`
     }
   }
 }

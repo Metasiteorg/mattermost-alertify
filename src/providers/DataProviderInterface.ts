@@ -1,4 +1,7 @@
-export type MsgData = {title: string; titleUrl: string}
+export type MsgData = {
+  title: string
+  branch: string
+}
 
 export interface DataProviderInterface {
   get(): MsgData

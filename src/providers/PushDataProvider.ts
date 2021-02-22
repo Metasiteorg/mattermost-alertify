@@ -4,7 +4,7 @@ export class PushDataProvider implements DataProviderInterface {
   get(): MsgData {
     return {
       title: 'test title',
-      titleUrl: 'test url'
+      branch: 'branch name'
     }
   }
 }
