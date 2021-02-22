@@ -15,6 +15,7 @@ export class pullRequestEachJob extends BaseTemplate {
       for (const name in artifactFiles) {
         const [title] = name.replace('-', ' ').split('.')
         fields.push({
+          short: true,
           title: title,
           value: artifactFiles[name]
         })
