@@ -10,7 +10,7 @@ export class EveryJobTemplate implements TemplateInterface {
   async generate(name: string, workflow: string): Promise<object> {
     return {
       username: 'Uncle Github',
-      text: `${name} ${workflow} ${this.data.title} ${this.data.branch}`,
+      text: `*${name}* ${workflow} ${this.data.title} ${this.data.branch}`,
       attachments: this.attachments,
       props: {
         card: this.commits.join('\n')

@@ -9,10 +9,16 @@ export class ArtifactApi {
   ) {}
 
   async getArtifacts(name: string): Promise<{[key: string]: string}> {
-    const response = await this.client.downloadArtifact(
-      name,
-      'artifacts/storage/' + name
-    )
+    const response = await this.client
+      .downloadArtifact(name, 'artifacts/storage/' + name)
+      .catch(err => {
+        return null
+      })
+
+    if (response === null) {
+      return Promise.resolve({'[key: string]': ' string'})
+    }
+
     const files = this.dirReader(response.downloadPath)
 
     let artifacts: {[key: string]: string} = {}
